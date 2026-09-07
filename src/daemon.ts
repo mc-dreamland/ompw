@@ -1,12 +1,12 @@
 import { join } from 'node:path';
 import { readFile, unlink } from 'node:fs/promises';
-import { acquireLock, loadCredentials } from './config.ts';
+import { acquireLock, atomicJson, loadCredentials } from './config.ts';
 import { Authentication } from './auth.ts';
 import { SessionRegistry } from './registry.ts';
 import { serve, type ServerOptions } from './server.ts';
 import { controlServer } from './control.ts';
 
-export interface DaemonOptions extends ServerOptions { ompPath: string }
+export interface DaemonOptions extends ServerOptions { ompPath: string; autoPort?: boolean }
 export async function runDaemon(dataDir: string): Promise<void> {
   const unlock = await acquireLock(dataDir);
   let controlListener: Awaited<ReturnType<typeof controlServer>> | undefined;
@@ -15,7 +15,18 @@ export async function runDaemon(dataDir: string): Promise<void> {
     const options: DaemonOptions = JSON.parse(await readFile(join(dataDir, 'service.json'), 'utf8'));
     const registry = new SessionRegistry({dataDir,ompPath:options.ompPath});
     await registry.initialize();
-    app = await serve(options,new Authentication(await loadCredentials(dataDir),dataDir),registry);
+    const auth = new Authentication(await loadCredentials(dataDir),dataDir);
+    for (;;) {
+      try { app = await serve(options,auth,registry); break; }
+      catch (error) {
+        if (!options.autoPort || (error as NodeJS.ErrnoException).code !== 'EADDRINUSE' || options.port >= 65535) throw error;
+        options.port++;
+        const origin = new URL(options.origin);
+        origin.port = String(options.port);
+        options.origin = origin.origin;
+      }
+    }
+    await atomicJson(join(dataDir,'service.json'),options);
     let shuttingDown = false;
     const shutdown = async () => {
       if (shuttingDown) throw new Error('Shutdown is already in progress.');

@@ -14,8 +14,8 @@ import { runDaemon, type DaemonOptions } from './daemon.ts';
 import { normalizeOtp } from './otp.ts';
 
 const help = `ompw - authenticated native OMP terminal
-Copyright 2026 Mc-andan and contributors. GPL-3.0-only. No warranty.
-License and corresponding source: https://github.com/Mc-andan/ompw
+Copyright 2026 Mc-andan and contributors. MIT License. No warranty.
+License and source: https://github.com/Mc-andan/ompw
 
   ompw                         Host OMP in the current project (default)
   ompw setup                   Set or replace login credentials
@@ -161,7 +161,10 @@ async function main() {
         const cert = values.cert ? resolve(values.cert) : saved.cert;
         const key = values.key ? resolve(values.key) : saved.key;
         const origin = values.origin ?? saved.origin ?? `${cert?'https':'http'}://${host.includes(':')?`[${host}]`:host}:${port}`;
-        await atomicJson(join(dataDir,'service.json'),{host,port,origin,cert,key,ompPath:values.omp ?? saved.ompPath ?? (process.platform==='win32'?'omp.exe':'omp')});
+        const autoPort = values.port === undefined && values.origin === undefined
+          && (saved.autoPort ?? port === 4310) && host === '127.0.0.1'
+          && origin === `${cert?'https':'http'}://127.0.0.1:${port}`;
+        await atomicJson(join(dataDir,'service.json'),{host,port,origin,cert,key,autoPort,ompPath:values.omp ?? saved.ompPath ?? (process.platform==='win32'?'omp.exe':'omp')});
         const log = await open(join(dataDir,'daemon.log'),'a',0o600);
         try {
           const child = spawn(process.execPath,[fileURLToPath(import.meta.url),'daemon','--data-dir',dataDir],{cwd,detached:true,stdio:['ignore',log.fd,log.fd],windowsHide:true});

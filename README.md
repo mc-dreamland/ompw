@@ -1,7 +1,7 @@
 # ompw
 
 [![CI](https://github.com/Mc-andan/ompw/actions/workflows/ci.yml/badge.svg)](https://github.com/Mc-andan/ompw/actions/workflows/ci.yml)
-[![License: GPL-3.0-only](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 在项目目录运行 `ompw`，通过一个经过认证的浏览器入口控制多个原生 [Oh My Pi (OMP)](https://github.com/can1357/oh-my-pi) 终端。
 
@@ -100,6 +100,8 @@ ompw
 ```text
 http://127.0.0.1:4310
 ```
+
+默认端口被占用时，ompw 会从下一端口依次尝试，并保存实际端口和 Origin；请使用命令输出的地址。显式指定 `--port` 或自定义 `--origin` 时不会自动切换。
 
 网页填写初始化时的管理员密码和 ompw 验证器的当前码。密码不做 trim 或大小写转换；验证码支持复制出的分组空格和全角数字。
 
@@ -354,7 +356,7 @@ test/                  边界与回归测试
 
 欢迎通过 [Issues](https://github.com/Mc-andan/ompw/issues) 报告问题或讨论修改，再提交 Pull Request。问题报告应包含 ompw/OMP/Node/Windows 版本、复现步骤、期望/实际行为和脱敏日志；不要包含 `auth.json`、`daemon.json`、私钥、Cookie 或完整私人对话。
 
-提交前运行 `npm run check`、`npm test`、`npm run build`；涉及终端/生命周期改动时，还应使用隔离数据目录验证真实 OMP 的启动、重连、单会话释放和后台关闭。新增测试应保护可观察行为和数据安全，不锁定 UI 文案或实现细节。贡献使用本项目 GPL-3.0-only 许可；不要求独立 CLA。讨论应尊重参与者，不发布他人隐私或凭据。
+提交前运行 `npm run check`、`npm run build`、`npm test`；涉及终端/生命周期改动时，还应使用隔离数据目录验证真实 OMP 的启动、重连、单会话释放和后台关闭。新增测试应保护可观察行为和数据安全，不锁定 UI 文案或实现细节。贡献使用本项目 MIT 许可；不要求独立 CLA。讨论应尊重参与者，不发布他人隐私或凭据。
 
 CI 在 Windows + Node.js 24 上进行依赖安装、类型检查、测试和网页构建。未运行的测试平台或场景不得在 PR 中声称已验证。
 
@@ -362,6 +364,6 @@ CI 在 Windows + Node.js 24 上进行依赖安装、类型检查、测试和网�
 
 Copyright (C) 2026 Mc-andan and contributors.
 
-ompw 以 **GNU General Public License v3.0 only (`GPL-3.0-only`)** 发布，完整条款见 [LICENSE](LICENSE)。允许按许可证使用、修改和分发；分发修改版或二进制时需履行相应源代码和许可声明义务。本项目不提供任何担保，包括适销性或特定用途适用性的默示担保。
+ompw 以 **MIT License (`MIT`)** 发布，完整条款见 [LICENSE](LICENSE)。允许使用、复制、修改、合并、发布、分发、再许可和销售软件副本；软件的所有副本或实质性部分均须保留版权声明和许可声明。本项目不提供任何担保，包括适销性、特定用途适用性和不侵权的担保。
 
 Node.js、node-pty、xterm.js、lucide、OTPAuth、Inquirer、ws 及其他依赖保留各自许可证。发行目录包含 `THIRD-PARTY-NOTICES.txt`、`runtime/LICENSE`、项目 LICENSE 和对应项目源码；依赖版本与获取信息在 package-lock.json 中。OMP 是独立安装的上游程序，不随本项目重新授权。
