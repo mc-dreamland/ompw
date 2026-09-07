@@ -1,0 +1,7 @@
+node_modules/
+.ompw/
+.verify/
+public/app.js
+public/app.css
+*.log
+dist/

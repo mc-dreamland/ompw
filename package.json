@@ -1,0 +1,44 @@
+{
+  "name": "ompw",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Authenticated browser control for multiple persistent native OMP sessions",
+  "license": "GPL-3.0-only",
+  "author": "Mc-andan",
+  "repository": { "type": "git", "url": "git+https://github.com/Mc-andan/ompw.git" },
+  "homepage": "https://github.com/Mc-andan/ompw#readme",
+  "bugs": { "url": "https://github.com/Mc-andan/ompw/issues" },
+  "bin": {
+    "ompw": "./src/cli.ts"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "esbuild src/web/main.ts --bundle --format=esm --target=es2022 --outdir=public --entry-names=app --minify",
+    "package": "node scripts/package.mjs",
+    "install:command": "dist\\ompw-win32-x64\\ompw.exe install",
+    "check": "tsc --noEmit",
+    "start": "node src/cli.ts serve",
+    "test": "node --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^8.7.1",
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/addon-serialize": "^0.14.0",
+    "@xterm/headless": "^6.0.0",
+    "@xterm/xterm": "^6.0.0",
+    "lucide": "^1.41.0",
+    "node-pty": "^1.1.0",
+    "otpauth": "^9.5.1",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "@types/ws": "^8.18.1",
+    "esbuild": "^0.28.2",
+    "postject": "^1.0.0-alpha.6",
+    "typescript": "^7.0.2"
+  }
+}
