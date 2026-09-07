@@ -5,10 +5,10 @@
   "type": "module",
   "description": "Authenticated browser control for multiple persistent native OMP sessions",
   "license": "MIT",
-  "author": "Mc-andan",
-  "repository": { "type": "git", "url": "git+https://github.com/Mc-andan/ompw.git" },
-  "homepage": "https://github.com/Mc-andan/ompw#readme",
-  "bugs": { "url": "https://github.com/Mc-andan/ompw/issues" },
+  "author": "BuGland",
+  "repository": { "type": "git", "url": "git+https://github.com/BuGland/ompw.git" },
+  "homepage": "https://github.com/BuGland/ompw#readme",
+  "bugs": { "url": "https://github.com/BuGland/ompw/issues" },
   "bin": {
     "ompw": "./src/cli.ts"
   },

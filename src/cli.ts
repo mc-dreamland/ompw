@@ -14,8 +14,8 @@ import { runDaemon, type DaemonOptions } from './daemon.ts';
 import { normalizeOtp } from './otp.ts';
 
 const help = `ompw - authenticated native OMP terminal
-Copyright 2026 Mc-andan and contributors. MIT License. No warranty.
-License and source: https://github.com/Mc-andan/ompw
+Copyright 2026 BuGland and contributors. MIT License. No warranty.
+License and source: https://github.com/BuGland/ompw
 
   ompw                         Host OMP in the current project (default)
   ompw setup                   Set or replace login credentials

@@ -1,6 +1,6 @@
 # ompw
 
-[![CI](https://github.com/Mc-andan/ompw/actions/workflows/ci.yml/badge.svg)](https://github.com/Mc-andan/ompw/actions/workflows/ci.yml)
+[![CI](https://github.com/BuGland/ompw/actions/workflows/ci.yml/badge.svg)](https://github.com/BuGland/ompw/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 在项目目录运行 `ompw`，通过一个经过认证的浏览器入口控制多个原生 [Oh My Pi (OMP)](https://github.com/can1357/oh-my-pi) 终端。
@@ -55,7 +55,7 @@ Linux/macOS 的底层库具有跨平台能力，但本项目的发行包、安�
 
 ### Windows 程序包
 
-若 [Releases](https://github.com/Mc-andan/ompw/releases) 提供与你的平台匹配的包，下载 `ompw-win32-x64.zip`。没有发布包时，按下文从源码构建。
+若 [Releases](https://github.com/BuGland/ompw/releases) 提供与你的平台匹配的包，下载 `ompw-win32-x64.zip`。没有发布包时，按下文从源码构建。
 
 1. 解压 ZIP，保留整个 `ompw-win32-x64` 目录，不能只复制 `ompw.exe`。
 2. 在该目录打开 PowerShell，执行：
@@ -233,7 +233,7 @@ OMP 的模型凭据、原生会话、工具产物仍由 OMP 在自己的目录�
 ## 从源码运行和构建
 
 ```powershell
-git clone https://github.com/Mc-andan/ompw.git
+git clone https://github.com/BuGland/ompw.git
 cd ompw
 npm ci
 npm run build
@@ -334,7 +334,7 @@ npm run install:command
 
 本机同一账户、管理员或能读取私有目录的攻击者不在认证防护边界内。TOTP 不是抗钓鱼认证。没有“绝对无漏洞”的保证；依赖审计只检查已知公告，不等于渗透测试或完整安全审计。
 
-报告安全问题时，请优先使用仓库 [Security](https://github.com/Mc-andan/ompw/security) 中可用的私密报告渠道。若仓库尚未启用私密报告，先向维护者请求私密沟通方式，不要把可利用细节、真实凭据或数据公开到 Issue。项目不承诺固定安全响应 SLA。
+报告安全问题时，请优先使用仓库 [Security](https://github.com/BuGland/ompw/security) 中可用的私密报告渠道。若仓库尚未启用私密报告，先向维护者请求私密沟通方式，不要把可利用细节、真实凭据或数据公开到 Issue。项目不承诺固定安全响应 SLA。
 
 ## 开发与贡献
 
@@ -354,7 +354,7 @@ scripts/               Windows 打包与安装
 test/                  边界与回归测试
 ```
 
-欢迎通过 [Issues](https://github.com/Mc-andan/ompw/issues) 报告问题或讨论修改，再提交 Pull Request。问题报告应包含 ompw/OMP/Node/Windows 版本、复现步骤、期望/实际行为和脱敏日志；不要包含 `auth.json`、`daemon.json`、私钥、Cookie 或完整私人对话。
+欢迎通过 [Issues](https://github.com/BuGland/ompw/issues) 报告问题或讨论修改，再提交 Pull Request。问题报告应包含 ompw/OMP/Node/Windows 版本、复现步骤、期望/实际行为和脱敏日志；不要包含 `auth.json`、`daemon.json`、私钥、Cookie 或完整私人对话。
 
 提交前运行 `npm run check`、`npm run build`、`npm test`；涉及终端/生命周期改动时，还应使用隔离数据目录验证真实 OMP 的启动、重连、单会话释放和后台关闭。新增测试应保护可观察行为和数据安全，不锁定 UI 文案或实现细节。贡献使用本项目 MIT 许可；不要求独立 CLA。讨论应尊重参与者，不发布他人隐私或凭据。
 
@@ -362,7 +362,7 @@ CI 在 Windows + Node.js 24 上进行依赖安装、类型检查、测试和网�
 
 ## 许可证与第三方组件
 
-Copyright (C) 2026 Mc-andan and contributors.
+Copyright (C) 2026 BuGland and contributors.
 
 ompw 以 **MIT License (`MIT`)** 发布，完整条款见 [LICENSE](LICENSE)。允许使用、复制、修改、合并、发布、分发、再许可和销售软件副本；软件的所有副本或实质性部分均须保留版权声明和许可声明。本项目不提供任何担保，包括适销性、特定用途适用性和不侵权的担保。
 
