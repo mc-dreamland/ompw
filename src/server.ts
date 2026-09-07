@@ -8,7 +8,6 @@ import type { HostedSession } from './session.ts';
 import type { SessionRegistry } from './registry.ts';
 
 export interface ServerOptions { host: string; port: number; origin: string; cert?: string; key?: string }
-const loopback = (host: string) => ['127.0.0.1', '::1', 'localhost', '[::1]'].includes(host);
 const sessionIdPattern = '[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
 const selectedPage = new RegExp(`^/\\?session=${sessionIdPattern}$`);
 const sessionRoute = new RegExp(`^/api/sessions/(${sessionIdPattern})(?:/(start|stop))?$`);
@@ -37,9 +36,7 @@ export async function serve(options: ServerOptions, auth: Authentication, regist
   if (origin.origin !== options.origin || origin.username || origin.password || !['http:', 'https:'].includes(origin.protocol)) throw new Error('--origin must be an exact http(s) origin without trailing slash.');
   if (!!options.cert !== !!options.key) throw new Error('--cert and --key must be provided together.');
   const tls = options.cert && options.key ? { cert: await readFile(options.cert), key: await readFile(options.key), minVersion: 'TLSv1.2' as const } : undefined;
-  if (!tls && !loopback(options.host)) throw new Error('Non-loopback listeners require --cert and --key.');
   if (tls && origin.protocol !== 'https:') throw new Error('TLS requires an https origin.');
-  if (origin.protocol === 'http:' && (!loopback(origin.hostname) || !loopback(options.host))) throw new Error('HTTP is allowed only on loopback.');
   const secure = origin.protocol === 'https:';
   const cookieName = secure ? '__Host-ompw' : 'ompw-local';
   const cookieValue = (value: string, age: number) => `${cookieName}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${age}${secure ? '; Secure' : ''}`;

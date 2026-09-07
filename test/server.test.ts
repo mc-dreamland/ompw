@@ -15,22 +15,22 @@ import { serve } from '../src/server.ts';
 test('HTTP and websocket require authentication, exact origin, and CSRF; logout closes established sockets', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'ompw-http-'));
   const password = randomBytes(24).toString('hex'); const salt = randomBytes(16).toString('hex'); const secret = new Secret();
-  const origin = 'http://127.0.0.1';
+  const origin = 'http://terminal.example.com';
   const auth = new Authentication({ version: 1, salt, hash: (await derive(password, salt)).toString('hex'), secret: secret.base32, lastCounter: -1 }, directory);
   const id = '11111111-1111-4111-8111-111111111111';
   const otherId = '22222222-2222-4222-8222-222222222222';
   await writeFile(join(directory,'sessions.json'),JSON.stringify({version:1,sessions:[id,otherId].map((id,index)=>({id,name:`test-${index}`,createdAt:new Date().toISOString(),cwd:directory,sessionFile:null,sessionId:null,stateDir:`hosts/${id}`}))}));
   const registry = new SessionRegistry({ dataDir: directory, ompPath: 'omp' });
   await registry.initialize();
-  const app = await serve({ host: '127.0.0.1', port: 0, origin }, auth, registry);
+  const app = await serve({ host: '0.0.0.0', port: 0, origin }, auth, registry);
   const port = (app.address as { port: number }).port;
   const http = (path: string, method = 'GET', headers: Record<string, string> = {}, body?: string) => new Promise<{ status: number; headers: import('node:http').IncomingHttpHeaders; body: string }>((accept, reject) => {
-    const req = request({ hostname: '127.0.0.1', port, path, method, headers: { Host: '127.0.0.1', ...headers } }, res => {
+    const req = request({ hostname: '127.0.0.1', port, path, method, headers: { Host: 'terminal.example.com', ...headers } }, res => {
       let text = ''; res.setEncoding('utf8'); res.on('data', chunk => { text += chunk; }); res.on('end', () => accept({ status: res.statusCode!, headers: res.headers, body: text }));
     }); req.on('error', reject); req.end(body);
   });
   const rejectSocket = (headers: Record<string, string>, expected: number) => new Promise<void>((accept, reject) => {
-    const ws = new WebSocket(`ws://127.0.0.1:${port}/terminal?session=${id}`, { headers: { Host: '127.0.0.1', ...headers } });
+    const ws = new WebSocket(`ws://127.0.0.1:${port}/terminal?session=${id}`, { headers: { Host: 'terminal.example.com', ...headers } });
     ws.on('open', () => { ws.terminate(); reject(new Error('Unauthorized upgrade succeeded')); });
     ws.on('error', () => {});
     ws.on('unexpected-response', (_req, res) => { res.resume(); ws.terminate(); try { assert.equal(res.statusCode, expected); accept(); } catch (e) { reject(e); } });
@@ -54,10 +54,10 @@ test('HTTP and websocket require authentication, exact origin, and CSRF; logout 
     await rejectSocket({ Origin: origin }, 401);
     await rejectSocket({ Origin: 'http://attacker.invalid', Cookie: cookie }, 403);
     await rejectSocket({ Cookie: cookie }, 403);
-    const ws = new WebSocket(`ws://127.0.0.1:${port}/terminal?session=${id}`, { headers: { Host: '127.0.0.1', Origin: origin, Cookie: cookie } });
+    const ws = new WebSocket(`ws://127.0.0.1:${port}/terminal?session=${id}`, { headers: { Host: 'terminal.example.com', Origin: origin, Cookie: cookie } });
     await new Promise<void>((accept, reject) => { ws.once('message', data => { try { assert.equal(JSON.parse(data.toString()).type, 'snapshot'); accept(); } catch (e) { reject(e); } }); ws.once('error', reject); });
     const connectTarget = async (target: string) => {
-      const socket = new WebSocket(`ws://127.0.0.1:${port}/terminal?session=${target}`, {headers:{Host:'127.0.0.1',Origin:origin,Cookie:cookie}});
+      const socket = new WebSocket(`ws://127.0.0.1:${port}/terminal?session=${target}`, {headers:{Host:'terminal.example.com',Origin:origin,Cookie:cookie}});
       const {promise,resolve,reject}=Promise.withResolvers<any>();
       socket.on('message',data=>{const message=JSON.parse(data.toString());if(message.type==='snapshot')resolve(message);});
       socket.once('error',reject);

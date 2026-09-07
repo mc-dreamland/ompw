@@ -27,9 +27,9 @@ License and source: https://github.com/BuGland/ompw
   ompw install                 Install the packaged Windows command for this user
 
 Options:
-  --host ADDRESS     Listener (default 127.0.0.1)
+  --host ADDRESS     Listener (default 0.0.0.0)
   --port NUMBER      Listener port (default 4310)
-  --origin URL       Exact browser origin; required outside default loopback
+  --origin URL       Exact browser origin; set to the actual remote URL
   --cert PATH        PEM TLS certificate
   --key PATH         PEM TLS private key
   --omp PATH         OMP executable (default omp.exe on Windows, omp elsewhere)
@@ -37,7 +37,7 @@ Options:
 
 setup prompts locally for a password and authenticator enrollment.
 setup replaces credentials only after confirmation; stop the server first.
-HTTP is loopback-only. HTTPS requires --cert and --key for non-loopback binds.
+HTTP is allowed on all listeners. HTTPS certificates use --cert and --key.
 Browser disconnect/logout never ends OMP. Release it in the UI before using
 omp --resume with the displayed native session path. Stop standalone OMP
 before starting hosting again. Credentials confer this OS user's privileges.
@@ -155,14 +155,15 @@ async function main() {
         let saved: Partial<DaemonOptions> = {};
         try { saved = JSON.parse(await readFile(join(dataDir,'service.json'),'utf8')); }
         catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error; }
-        const host = values.host ?? saved.host ?? '127.0.0.1';
+        const host = values.host ?? saved.host ?? '0.0.0.0';
         const port = Number(values.port ?? saved.port ?? 4310);
         if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid --port.');
         const cert = values.cert ? resolve(values.cert) : saved.cert;
         const key = values.key ? resolve(values.key) : saved.key;
-        const origin = values.origin ?? saved.origin ?? `${cert?'https':'http'}://${host.includes(':')?`[${host}]`:host}:${port}`;
+        const originHost = host === '0.0.0.0' ? '127.0.0.1' : host;
+        const origin = values.origin ?? saved.origin ?? `${cert?'https':'http'}://${originHost.includes(':')?`[${originHost}]`:originHost}:${port}`;
         const autoPort = values.port === undefined && values.origin === undefined
-          && (saved.autoPort ?? port === 4310) && host === '127.0.0.1'
+          && (saved.autoPort ?? port === 4310) && (host === '127.0.0.1' || host === '0.0.0.0')
           && origin === `${cert?'https':'http'}://127.0.0.1:${port}`;
         await atomicJson(join(dataDir,'service.json'),{host,port,origin,cert,key,autoPort,ompPath:values.omp ?? saved.ompPath ?? (process.platform==='win32'?'omp.exe':'omp')});
         const log = await open(join(dataDir,'daemon.log'),'a',0o600);
